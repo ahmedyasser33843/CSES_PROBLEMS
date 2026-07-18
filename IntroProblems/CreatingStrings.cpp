@@ -2,43 +2,52 @@
 using namespace std;
 
 string s;
-vector<string> ans;
+string ans;
+vector<bool> check(8, true);
 
-void solve(int idx) {
-    if (idx == s.size()) {
-        ans.push_back(s);
+void stringPermutation(){
+
+    if (s.size() == ans.size()){
+        cout << ans << "\n";
         return;
     }
 
-    set<char> used;
+    for (int i = 0; i < s.size(); i++){
+        if (!check[i]) continue;
+        if (i > 0 && s[i] == s[i - 1] && check[i - 1]) continue;
 
-    for (int i = idx; i < s.size(); i++) {
-        if (used.count(s[i]))
-            continue;
+        check[i] = false;
+        ans.push_back(s[i]);
 
-        used.insert(s[i]);
+        stringPermutation();
 
-        swap(s[idx], s[i]);
-        solve(idx + 1);
-        swap(s[idx], s[i]);
+        ans.pop_back();
+        check[i] = true;
     }
+}
+
+int factorial(int n){
+    if (n <= 1) return 1;
+    n *= factorial(n - 1);
+    return n;
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    cin >> s;
+    vector<int> cnt(26);
+    int num = 1;
 
+    cin >> s;
     sort(s.begin(), s.end());
 
-    solve(0);
+    for(int i = 0; i < s.size(); i++){
+        cnt[s[i] - 97]++;
+    }
 
-    sort(ans.begin(), ans.end());
+    for (int& x : cnt) num *= factorial(x);
+    cout << factorial((int)s.size()) / num << "\n";
+    stringPermutation();
 
-    cout << ans.size() << '\n';
-    for (string &x : ans)
-        cout << x << '\n';
-
-    return 0;
 }
